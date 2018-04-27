@@ -1,0 +1,99 @@
+---
+title: "Lista 2 - CE1 - Visualização: Solução"
+author: ['Jonathan Mendes de Almeida - 18/0048775', 'jonathanalmd@gmail.com', 'jonathan@aluno.unb.br','https://jonyddev.github.io']
+lang: en
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+output:
+    pdf_document:
+      latex_engine: xelatex
+---
+# Importar `tidyverse`
+```{r eval = TRUE}
+library(tidyverse) 
+library(nycflights13) 
+```
+
+# Questão 1 (5.2.4-1) 
+> Encontre os vôos que:
+
+> 1.1 Tinham um atraso de chegada de duas ou mais horas
+
+**(Resposta)** `arr_delay` in minutes
+```{r eval = TRUE}
+filter(flights, arr_delay >= 120)
+```
+
+> 1.2 Voaram para Houston (`IAH` ou `HOU`) 
+
+**(Resposta)** 
+```{r eval = TRUE}
+filter(flights, dest %in% c('IAH','HOU'))
+```
+
+> 1.3 Foram operados pela United, American ou Delta
+
+**(Resposta)** 
+```{r eval = TRUE}
+filter(flights, carrier %in% c('UA','AA', 'DL'))
+```
+
+> 1.4 Partiram no verão (Julho, Agosto e Setembro)
+
+**(Resposta)** `month` é um inteiro entre 1 e 12
+```{r eval = TRUE}
+filter(flights, month %in% c(7:9))
+```
+
+> 1.5 Chegaram com mais de duas horas de atraso, mas não saíram atrasados
+
+**(Resposta)** `arr_delay` in minutes
+```{r eval = TRUE}
+filter(flights, arr_delay > 120 & dep_delay <= 0)
+```
+
+> 1.6 Foram adiados por pelo menos uma hora, mas rcuperaram mais de 30 minutos de atraso durante o vôo
+
+**(Resposta)** `dep_delay` e `arr_delay` em minutos
+```{r eval = TRUE}
+filter(flights, dep_delay >= 60 & air_time > 30)
+```
+
+> 1.7 Partiram entre meia-noite e 6 da manhã (inclusive)
+
+**(Resposta)**
+`dep_time` exatamente meia noite ou antes de 6 horas. _Aqui, '600' é 6:00 e '2400' é 00:00_
+
+```{r eval = TRUE}
+filter(flights, dep_time == 2400 | dep_time < 600)
+```
+
+# Questão 2 (5.3.1-4)
+> Quais vôos viajaram a maior distância? Quais viajaram a menor distância?
+
+**(Resposta)** Para achar os vôos que viajaram a maior distância devemos usar o `arrange()` e o  `desc()` com a variável `distance`:
+
+```{r eval = TRUE}
+arrange(flights, desc(distance))
+```
+
+E para achar os vôos que viajaram a menor distância, basta usar o `arrange()` com `distance`:
+
+```{r eval = TRUE}
+arrange(flights, distance)
+```
+
+# Questão 3 (5.4.1-3)
+> O que a função `one_of()` faz? Por que isso pode ser útil em conjunto com este vetor? 
+
+```{r eval = TRUE}
+vars <- c("year", "month", "day", "dep_delay", "arr_delay")
+```
+
+**(Resposta)** 
+
+
+```{r eval = TRUE}
+select(flights, one_of(vars))
+```
+
+Com o `one_of` você pode usar vetores (nesse exemplo é um vetor chamado `vars`) com o `select()` para selecionar variáveis de interesse.
