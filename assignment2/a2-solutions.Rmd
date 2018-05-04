@@ -97,3 +97,28 @@ select(flights, one_of(vars))
 ```
 
 Com o `one_of` você pode usar vetores (nesse exemplo é um vetor chamado `vars`) com o `select()` para selecionar variáveis de interesse.
+
+# Questão 4 (5.6.7-4)
+> Observe o número de vôos cancelados por dia.
+
+> 1. Existe um padrão?
+> 2. A proporção dos vôos cancelados está relacionada ao atraso médio?
+
+**(Resposta)**
+
+Vamos verificar se existe um padrão no número de vôos cancelados:
+
+```{r eval = TRUE}
+canceled_delayed <-
+  flights %>%
+  mutate(canceled = (is.na(arr_delay) | is.na(dep_delay))) %>%
+  group_by(day, month, year) %>%
+  summarise(canceled_prop = mean(canceled),
+            delay_avg = mean(dep_delay, na.rm = TRUE))
+
+ggplot(canceled_delayed, aes(x = avg_dep_delay, prop_canceled)) +
+  geom_point()
+```
+
+Como é possível verificar no gráfico acima, existe um padrão no número de vôos cancelados
+
