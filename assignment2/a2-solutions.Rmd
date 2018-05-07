@@ -106,19 +106,46 @@ Com o `one_of` você pode usar vetores (nesse exemplo é um vetor chamado `vars`
 
 **(Resposta)**
 
-Vamos verificar se existe um padrão no número de vôos cancelados:
+Primeiro vamos comparar a quantidade de vôos cancelados com a quantidade de vôos não cancelados:
 
 ```{r eval = TRUE}
-canceled_delayed <-
+dff <- mutate(flights, canceled = (is.na(arr_delay)) | is.na(dep_delay))
+ggplot(data = dff) +
+    geom_bar(mapping = aes(x = canceled, y = ..prop.., group = 1))
+```
+
+É possível verificar que a mais porte dos vôos não são cancelados. Agora vamos verificar o horário marcado e tempo de vôo marcado para os vôos que foram cancelados:
+
+```{r eval = TRUE}
+# dff <- filter(dff, is.na(arr_delay), is.na(dep_delay))
+dff <- 
+  flights %>%
+  mutate(canceled = (is.na(arr_delay)) | is.na(dep_delay)) %>%
+  filter(canceled == TRUE)
+ggplot(data = dff) +
+    geom_point(mapping = aes(y = sched_dep_time, x = sched_arr_time))
+```
+
+Analisando esse último gráfico é possível observar que vôos que não são muito longos normalmente não são os vôos que atrasam. 
+
+Após verificar esses comportamentos, vamos verificar a quantidade de vôos cancelados por dia
+
+
+
+Analisando o gráfico acima é possível analisar um comportamento curioso:quando um vôo atrasa mais do que 500 minutos ele normalmente não é cancelado. 
+
+```{r eval = TRUE}
+df <-
   flights %>%
   mutate(canceled = (is.na(arr_delay) | is.na(dep_delay))) %>%
   group_by(day, month, year) %>%
   summarise(canceled_prop = mean(canceled),
             delay_avg = mean(dep_delay, na.rm = TRUE))
-
-ggplot(canceled_delayed, aes(x = avg_dep_delay, prop_canceled)) +
+ggplot(df, aes(x = delay_avg, canceled_prop)) +
   geom_point()
 ```
+
+
 
 Como é possível verificar no gráfico acima, existe um padrão no número de vôos cancelados
 
