@@ -122,30 +122,88 @@ dff <-
   flights %>%
   mutate(canceled = (is.na(arr_delay)) | is.na(dep_delay)) %>%
   filter(canceled == TRUE)
+dff
+```
+
+```{r eval = TRUE}
 ggplot(data = dff) +
     geom_point(mapping = aes(y = sched_dep_time, x = sched_arr_time))
 ```
 
 Analisando esse último gráfico é possível observar que vôos que não são muito longos normalmente não são os vôos que atrasam. 
 
-Após verificar esses comportamentos, vamos verificar a quantidade de vôos cancelados por dia
-
-
-
-Analisando o gráfico acima é possível analisar um comportamento curioso:quando um vôo atrasa mais do que 500 minutos ele normalmente não é cancelado. 
+Agora vamos separar os vôos por dia e verificar a média de atraso e a proporção. Primeiramente vamos adicionar a coluna para dizer se o vôo foi cancelado ou não e depois agrupar os vôos por dia:
 
 ```{r eval = TRUE}
 df <-
   flights %>%
   mutate(canceled = (is.na(arr_delay) | is.na(dep_delay))) %>%
-  group_by(day, month, year) %>%
+  group_by(day, month, year)
+df
+```
+
+Agora vamos sumarizar e verificar a proporção de vôos cancelados e o atraso médio:
+
+```{r eval = TRUE}
+df <-
+  df %>%
   summarise(canceled_prop = mean(canceled),
             delay_avg = mean(dep_delay, na.rm = TRUE))
+df
+```
+
+Com isso, só falta plotar o resultado obtido:
+
+```{r eval = TRUE}
 ggplot(df, aes(x = delay_avg, canceled_prop)) +
   geom_point()
 ```
 
+Como é possível verificar no gráfico acima, existe uma relação entre a proporção do número de vôos cancelados e o atraso médio, se concentrando bastante em uma média de atraso baixa. No entanto, também é possível observar que há alguns _outliers_.
 
 
-Como é possível verificar no gráfico acima, existe um padrão no número de vôos cancelados
+
+# Questão 5 (5.6.7-5)
+> Qual transportadora tem os piores atrasos? Desafio: você pode desenredar os efeitos de aeroportos ruins versus operadoras ruins? Porque ou porque não? (Sugestão: pense sobre `flights %>% group_by(carrier, dest) %>% summarize(n())`)
+
+**(Resposta)**
+Vamos organizar os dados agrupando por transportadora e depois sumarizar verificando o atraso:
+
+```{r eval = TRUE}
+flights %>%
+  group_by(carrier) %>%
+  summarise(arr_delay = mean(arr_delay, na.rm = TRUE))
+```
+
+Verificando o resultado obtido acima, é possível concluir que a transportadora F9 é a que mais atrasa (21.9), seguido da transportadora FL (20.1). Para comparar os atrasos de aeroportos 'ruins' versus transportadoras 'ruins' basta calcular o atraso médio de todos os vôos que decolam/pousam nesse aeroporto. É possível, por exemplo, que uma transportadora específica seja duramente prejudicada devido ao aeroporto ruim caso maior parte dos vôos sejam saindo desse aeroporto ou chegando até ele. Isso é apenas um exemplo de como é possível relacionar esses fatores.
+
+# Questão 6 (5.7.1-4)
+> Para cada destino, calcule o total de minutos de atraso. Para cada vôo (variável `flight`), calcule a proporção do atraso total para o seu destino que ele gera.
+
+**(Resposta)**
+
+Vamos adicionar uma coluna com o total de minutos de atraso, considerando apenas vôos que realmente atrasaram:
+
+```{r eval = TRUE}
+dfflights <- flights %>%
+  filter(!is.na(arr_delay), arr_delay > 0) %>%  
+  group_by(dest) %>%
+  mutate(total_delay_minutes = sum(arr_delay))
+dfflights
+```
+
+Agora vamos adicionar uma coluna com a proporção do atraso total:
+
+```{r eval = TRUE}
+dfflights <- dfflights %>%
+  mutate(prop_delay = arr_delay / sum(arr_delay))
+dfflights
+```
+
+Para verificar as duas colunas adicionadas basta utilizar `select()`
+
+```{r eval = TRUE}
+select(dfflights, total_delay_minutes, prop_delay)
+```
+
 
