@@ -1,0 +1,357 @@
+---
+title: "Lista 3 - CE1 - Visualização: Solução"
+author: ['Jonathan Mendes de Almeida - 18/0048775', 'jonathanalmd@gmail.com', 'jonathan@aluno.unb.br','https://jonyddev.github.io']
+lang: en
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+output:
+    pdf_document:
+      latex_engine: xelatex
+---
+# Importar `tidyverse` e outros pacotes necessários para este capítulo.
+
+```{r eval = TRUE}
+library(tidyverse)
+#library(viridis)
+#library(forcats)
+#library(nycflights13) 
+```
+
+# Plotar múltiplos gráficos em uma página (fonte: http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/)
+
+```{r eval = TRUE}
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+
+  plots <- c(list(...), plotlist)
+
+  numPlots = length(plots)
+
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                    ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+
+ if (numPlots==1) {
+    print(plots[[1]])
+
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+
+# Capítulo 7 - Análise Exploratória de Dados
+
+## 7.3.4
+
+### Exercício 1
+> Explore the distribution of each of the x, y, and z variables in diamonds. What do you learn? Think about a diamond and how you might decide which dimension is the length, width, and depth.
+
+**(Resposta)**
+
+Primeiramente, vamos plotar os histogramas para analisar cada uma das variáveis:
+
+```{r eval = TRUE}
+px <- ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = x), binwidth = 0.1) +
+  coord_cartesian(xlim = c(0, 60), ylim = c(0, 100))
+
+py <- ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = y), binwidth = 0.1) +
+  coord_cartesian(xlim = c(0, 60), ylim = c(0, 100))
+
+pz <- ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = z), binwidth = 0.1) +
+  coord_cartesian(xlim = c(0, 60), ylim = c(0, 100))
+
+pall <- multiplot(px, py, pz, cols=1)
+
+pall
+```
+
+Primeiro vamos aos comentários: foi necessário colocar um limite de 0 a 60 no eixo X porque para a variável Y há outliers em valores que estão na casa de 55 a 60 (enquanto da variável X não há valor acima de 10 e da variável Z não passa de 40). Os outliers são os diamantes grandes, o nos mostra que maior parte dos diamantes são pequenos. No entanto, com essa escala no eixo Y (contagem) fica difícil de observar esses outliers pois grande parte das observações possuem valores entre 3 e 10 para a variável X, 2 e 12 para a variável Y e 2 e 10 para a variável Z (aproximadamente) - que são os diamantes pequenos. Uma vez que descobrimos que os outliers são os diamantes grantes, vamos modificar a escala do eixo X e Y de forma a melhorar a visualizacão da distribuição da maior parte dos dados (ignorando maior parte dos outliers):
+
+```{r eval = TRUE}
+px <- ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = x), binwidth = 0.1) +
+  coord_cartesian(xlim = c(2, 10), ylim = c(0, 5000))
+
+py <- ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = y), binwidth = 0.1) +
+  coord_cartesian(xlim = c(2, 10 ), ylim = c(0, 5000))
+
+pz <- ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = z), binwidth = 0.1) +
+  coord_cartesian(xlim = c(2, 10), ylim = c(0, 5000))
+
+pall <- multiplot(px, py, pz, cols=1)
+
+pall
+```
+
+Dessa forma, fica mais fácil de comparar a distribuição de cada uma das variáveis e então verificar que o tamanho no eixo X e Y são extremamente semelhantes. Também é possível verificar que a profundidade tem varlores mais baixos. Verificando isso, podemos supor que X e Y representam tamanho e largura, pois verificando os histogramas foi possível observar uma proporção, algo muito provavelmente desejado para cortes de diamantes. E com isso, a variável Z seria a profundidade do diamante, o que faz sentido uma vez que Z possui valores menores do que X e Y na sua grande maioria. 
+
+### Exercício 2
+> Explore the distribution of price. Do you discover anything unusual or surprising? (Hint: Carefully think about the binwidth and make sure you try a wide range of values.)
+
+**(Resposta)**
+
+Primeiro vamos plotar um histograma geral dos preços e a partir disso decidir como prosseguir com a análise:
+
+```{r eval = TRUE}
+ggplot(diamonds) + 
+  geom_histogram(mapping = aes(x = price), binwidth = 100) +
+  coord_cartesian(xlim = c(0, 20000), ylim = c(0, 1600))
+```
+
+Observando o histograma é possível verificar que grande parte dos diamantes custam menos do que 5000. Vamos filtrar os dados de forma a observar somente os diamantes "mais baratos" (valores abaixo de 5000):
+
+```{r eval = TRUE}
+ggplot(filter(diamonds, price < 5000)) + 
+  geom_histogram(mapping = aes(x = price), binwidth = 50) +
+  coord_cartesian(xlim = c(0, 5000), ylim = c(0, 1600))
+```
+
+Esse gráfico nos mostra que temos uma grande concentração de diamantes que custam entre 500 e 1500 (e inclusive tem um _gap_ no 1500!), interessante! Vamos filtrar os dados de forma a analisar apenas os diamantes que custam entre 500 e 1500!
+
+```{r eval = TRUE}
+ggplot(filter(diamonds, price > 500 & price < 1500)) + 
+  geom_histogram(mapping = aes(x = price), binwidth = 50) +
+  coord_cartesian(xlim = c(500, 1500), ylim = c(0, 1600))
+```
+
+Muito interessante! Podemos verificar o curioso fato de que não há diamantes que custam 1500 e verificar que grande parte dos diamantes custem entre 500 e 5000~8000. Poucos são os diamantes que custam mais que 1000. 
+
+Vamos tentar relacionar esses dados de preço com o corte do diamante:
+
+```{r eval = TRUE}
+ggplot(diamonds, mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 100)
+```
+
+Aha! É possível verificar que a maior parte dos diamantes mais baratos são os diamantes com corte _Ideal_! Vamos filrar os dados três vezes para analisar os cortes dos diamantes com preço entre 500 e 2000, entre 2000 e 7000 e depois os com preço entre 13000 e 18000.
+
+```{r eval = TRUE}
+ggplot(filter(diamonds, price > 500 & price < 2000), mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 100)
+```
+
+Com esse gráfico é posível mais uma vez verificar a predomiância dos cortes _Ideal_ para os diamantes mais baratos.
+
+```{r eval = TRUE}
+ggplot(filter(diamonds, price > 2000 & price < 7000), mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 100)
+```
+
+Para valores "medianos" é possível verificar que o corte _Ideal_ não se destaca tanto quanto antes e os outros cortes começam a ter mais frequência também. 
+
+```{r eval = TRUE}
+ggplot(filter(diamonds, price > 13000 & price < 18000), mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 100)
+```
+
+Para os diamantes mais caros é possível verificar que os com cortes _Premium_ predominam, o que faz muito sentido!
+
+Vamos plotar todos esses quatro gráficos em conjunto para visualizar melhor:
+
+```{r eval = TRUE}
+allprice <- ggplot(diamonds, mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 500)
+
+cprice <- ggplot(filter(diamonds, price > 500 & price < 2000), mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 500)
+
+mprice <- ggplot(filter(diamonds, price > 2000 & price < 7000), mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 500)
+
+oprice <- ggplot(filter(diamonds, price > 13000 & price < 18000), mapping = aes(x = price, colour = cut)) + 
+  geom_freqpoly(binwidth = 500)
+
+dpall <- multiplot(allprice, cprice, mprice, oprice, cols=2)
+```
+
+Muito legal!
+
+### Exercício 3
+> How many diamonds are 0.99 carat? How many are 1 carat? What do you think is the cause of the difference?
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 4
+> Compare and contrast coord_cartesian() vs xlim() or ylim() when zooming in on a histogram. What happens if you leave binwidth unset? What happens if you try and zoom so only half a bar shows?
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+
+## 7.4.1
+
+### Exercício 1
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 2
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+## 7.5.1.1
+
+### Exercício 1
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 2
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 3
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 4
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 5
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 6
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+
+
+## 7.5.2.1
+
+### Exercício 1 
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 2
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 3 
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+
+
+## 7.5.3.1
+
+### Exercício 1 
+>
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 2
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 3 
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 4 
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+### Exercício 5 
+>
+
+**(Resposta)**
+
+```{r eval = TRUE}
+
+```
+
+

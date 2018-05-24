@@ -162,6 +162,22 @@ ggplot(df, aes(x = delay_avg, canceled_prop)) +
 Como é possível verificar no gráfico acima, existe uma relação entre a proporção do número de vôos cancelados e o atraso médio, se concentrando bastante em uma média de atraso baixa. No entanto, também é possível observar que há alguns _outliers_.
 
 
+```{r eval = TRUE}
+flights <- flights %>%
+  mutate(cancelado = is.na(dep_delay))
+
+flights %>%
+  summarise(frac_cancelado = mean(cancelado),
+            numero_cancelado = sum(cancelado))
+
+flights %>%
+  group_by(year, month, day) %>%
+  summarise(frac_cancelado = mean(cancelado)) %>%
+  geom_point() 
+
+```
+
+
 
 # Questão 5 (5.6.7-5)
 > Qual transportadora tem os piores atrasos? Desafio: você pode desenredar os efeitos de aeroportos ruins versus operadoras ruins? Porque ou porque não? (Sugestão: pense sobre `flights %>% group_by(carrier, dest) %>% summarize(n())`)
