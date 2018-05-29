@@ -1,5 +1,5 @@
 ---
-title: "Lista 3 - CE1 - Visualização: Solução"
+title: "Lista 3 - CE1 - Visualização: Solução Capítulo 7"
 author: ['Jonathan Mendes de Almeida - 18/0048775', 'jonathanalmd@gmail.com', 'jonathan@aluno.unb.br','https://jonyddev.github.io']
 lang: en
 date: "`r format(Sys.time(), '%d de %B de %Y')`"
@@ -16,7 +16,9 @@ library(tidyverse)
 #library(nycflights13) 
 ```
 
-# Plotar múltiplos gráficos em uma página (fonte: http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/)
+# Plotar múltiplos gráficos em uma página 
+
+fonte: http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
 
 ```{r eval = TRUE}
 multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
@@ -185,39 +187,33 @@ Muito legal!
 
 **(Resposta)**
 
-```{r eval = TRUE}
-
-```
-
-### Exercício 4
-> Compare and contrast coord_cartesian() vs xlim() or ylim() when zooming in on a histogram. What happens if you leave binwidth unset? What happens if you try and zoom so only half a bar shows?
-
-**(Resposta)**
+Vamos filtrar os dados de forma a pegar apenas os diamantes com carat entre 0.99 e em seguida vamos usar a função `count()` para verificar as ocorrências.
 
 ```{r eval = TRUE}
-
+diamonds %>%
+  filter(carat >= 0.99, carat <= 1) %>%
+  count(carat)
 ```
+
+É possível ver que temos muito mais diamantes com carat igual a 1. A diferença é muito consideravel e provavelmente se deve ao arredondamento do valor uma vez que, ao verificar o que significa o carat de um diamante verifiquei que é uma medida relacionada à medida aparente do diamante (http://4cs.gia.edu/en-us/diamond-carat-weight/).
 
 
 ## 7.4.1
 
 ### Exercício 1
->
+> What happens to missing values in a histogram? What happens to missing values in a bar chart? Why is there a difference?
 
 **(Resposta)**
 
-```{r eval = TRUE}
-
-```
+Para histogramas, os valores perdidos são ignorados. Já para gráfico de barras, o valor perdido é considerado como uma categoria (o que pode ser interessante para visualizar quantos valores perdidos temos no nosso dataset). 
 
 ### Exercício 2
->
+> What does na.rm = TRUE do in mean() and sum()?
 
 **(Resposta)**
 
-```{r eval = TRUE}
+Serve para retirar os valores perdodos do vetor para quando for calcular a média ou a soma de valores desse vetor (ignorar os `NA` no cálculo de média e soma).
 
-```
 
 ## 7.5.1.1
 
