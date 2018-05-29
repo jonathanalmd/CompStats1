@@ -297,8 +297,6 @@ Instalar e importar o pacote:
 ```{r eval = TRUE}
 # install.packages("lvplot")
 library(lvplot)
-ggplot(diamonds, aes(x = cut, y = price)) +
-  geom_lv()
 ```
 
 Vamos fazer o plot:
@@ -313,79 +311,76 @@ Observando o gráfico eu interpretaria mais ou menos como se interpreta um boxlo
 
 ## 7.5.2.1
 
-### Exercício 1 
->
-
-**(Resposta)**
-
-```{r eval = TRUE}
-
-```
-
 ### Exercício 2
->
+> Use geom_tile() together with dplyr to explore how average flight delays vary by destination and month of year. What makes the plot difficult to read? How could you improve it?
 
 **(Resposta)**
 
 ```{r eval = TRUE}
-
+flights %>%
+  group_by(month, dest) %>%
+  summarise(dep_delay = mean(dep_delay, na.rm = TRUE)) %>%
+  ggplot(aes(x = factor(month), y = dest, fill = dep_delay)) +
+  geom_tile()
 ```
+
+Como é possível verificar nesse último plot, é ruim ler as labels de destino (eixo y), a paleta de cores não ajuda na visualização/diferenciação dos resultados e há muitos valores perdidos. É possível melhorar isso se o plot for visualizado com zoom de forma que as labels do eixo Y não fiquem uma por cima da outra, modificando a paleta de cores utilizada para plotar e por fim, removendo os valores perdidos. 
 
 ### Exercício 3 
->
+> Why is it slightly better to use aes(x = color, y = cut) rather than aes(x = cut, y = color) in the example above?
 
 **(Resposta)**
 
-```{r eval = TRUE}
-
-```
-
+É melhor usar a variável categórica com mais categorias no eixo Y e a com menos no eixo X.
 
 
 ## 7.5.3.1
 
-### Exercício 1 
->
-**(Resposta)**
-
-```{r eval = TRUE}
-
-```
-
 ### Exercício 2
->
+> Visualise the distribution of carat, partitioned by price.
 
 **(Resposta)**
 
-```{r eval = TRUE}
+Vamos fazer um boxlpot dividido em 5 partes:
 
+```{r eval = TRUE}
+ggplot(diamonds, mapping = aes(x = cut_number(price, 5), y = carat)) +
+  geom_boxplot()
 ```
 
 ### Exercício 3 
->
+> How does the price distribution of very large diamonds compare to small diamonds. Is it as you expect, or does it surprise you?
 
 **(Resposta)**
 
-```{r eval = TRUE}
-
-```
+A distribuição de diamantes muito grandes varia mais do que a de diamantes menores e isso é algo que eu esperava uma vez que, como já comentado em um exercício anterior, diamantes pequenos devem ser 'melhores' para serem vendidos de forma lucrativa (melhores no caso seriam diamantes com cortes/cores melhores). Ou seja, diamantes pequenos são mais homogêneos pois há um 'padrão' de mercado mais bem definido quando comparado com o comércio de diamantes grandes. Essa é a minha conclusão baseado no pouco que pude pesquisar sobre o mercado diamantes durante a realização desses exercícios.
 
 ### Exercício 4 
->
+> Combine two of the techniques you’ve learned to visualise the combined distribution of cut, carat, and price.
 
 **(Resposta)**
 
-```{r eval = TRUE}
+Vamos usar aquela partição que foi feita no exercício 2 (7.5.3.1) em conjunto com boxplot e utilizando cores para diferenciar os cortes:
 
+```{r eval = TRUE}
+ggplot(diamonds, aes(x = cut_number(price, 5), y = carat, colour = cut)) +
+  geom_boxplot()
 ```
 
 ### Exercício 5 
->
+> Two dimensional plots reveal outliers that are not visible in one dimensional plots. For example, some points in the plot below have an unusual combination of x and y values, which makes the points outliers even though their x and y values appear normal when examined separately.
+
+```{r eval = TRUE}
+ggplot(data = diamonds) +
+  geom_point(mapping = aes(x = x, y = y)) +
+  coord_cartesian(xlim = c(4, 11), ylim = c(4, 11))
+```
+
+> Why is a scatterplot a better display than a binned plot for this case?
 
 **(Resposta)**
 
-```{r eval = TRUE}
+O gráfico de pontos mostra melhor porque há uma forte relação entre as variáveis x e y (como já comentado nos primeiros exercícios do capítulo). Com esse gráfico fica simples verificar que essa distribuição de dados poderia ser adequada a um modelo facilmente.
 
-```
 
 
