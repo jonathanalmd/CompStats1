@@ -11,9 +11,7 @@ output:
 
 ```{r eval = TRUE}
 library(tidyverse)
-#library(viridis)
-#library(forcats)
-#library(nycflights13) 
+library(nycflights13) 
 ```
 
 # Plotar múltiplos gráficos em uma página 
@@ -218,59 +216,99 @@ Serve para retirar os valores perdodos do vetor para quando for calcular a médi
 ## 7.5.1.1
 
 ### Exercício 1
->
+> Use what you’ve learned to improve the visualisation of the departure times of cancelled vs. non-cancelled flights.
 
 **(Resposta)**
 
-```{r eval = TRUE}
+Vamos usar o boxplot para visualizar melhor!
 
+```{r eval = TRUE}
+cflights <- mutate(flights, canceled = is.na(dep_time)) 
+  
+ggplot(cflights, mapping = aes(y = sched_dep_time, x = canceled)) +
+    geom_boxplot()
 ```
+
+Modificando a forma de representação do tempo:
+
+```{r eval = TRUE}
+hflights <- mutate(cflights, 
+                  shour = sched_dep_time %/% 100,
+                  smin = sched_dep_time %% 100,
+                  sched_dep_time = shour + smin / 60
+                  ) 
+  
+ggplot(hflights, mapping = aes(y = sched_dep_time, x = canceled)) +
+    geom_boxplot()
+```
+
+Bem melhor para visualizar!
 
 ### Exercício 2
->
+>What variable in the diamonds dataset is most important for predicting the price of a diamond? How is that variable correlated with cut? Why does the combination of those two relationships lead to lower quality diamonds being more expensive?
 
 **(Resposta)**
 
-```{r eval = TRUE}
+A variável mais relevante para prever o preço de um diamante é a variável carat (http://4cs.gia.edu/en-us/diamond-carat-weight/). Vamos fazer um boxplot para verificar a relação entre carat e cut:
 
+```{r eval = TRUE}
+ggplot(diamonds, mapping = aes(x = cut, y = carat)) +
+  geom_boxplot()
 ```
+
+É possível ver que há alguns outliers nesse plot, em que temos o diamante de corte `fair` com o maior carat, o que é algo que me surpreendeu. Sempre que temos outliers temos diferentes justificativas que podemos supor. Para essa situação podemos dizer que é algo devido ao modo em que os diamantes foram escolhidos para serem vendidos, em que diamantes grandes não precisam ter um corte muito bem trabalhado para serem vendidos (pois por exemplo, eles podem ser divididos para fazer mais diamantes menores e então o corte será aprimorado). É difícil apontar uma justificativa certeira para isso.
 
 ### Exercício 3
->
+> Install the ggstance package, and create a horizontal boxplot. How does this compare to using coord_flip()?
 
 **(Resposta)**
 
-```{r eval = TRUE}
+Instalar e importar o pacote:
 
+```{r eval = TRUE}
+# install.packages("ggstance")
+library(ggstance)
 ```
+
+Com o ggstance, o código para fazer o boxplot na horizontal fica mais legível uma vez que a variável no eixo x fica "realmente" no eixo x e a variável y também. Veja:
+
+```{r eval = TRUE}
+ggplot(data = mpg, mapping = aes(y = reorder(class, hwy, FUN = median), x = hwy)) +
+  geom_boxploth()
+```
+
+Lembre que durante o capítulo foi feito este plot:
+
+```{r eval = TRUE}
+ggplot(data = mpg) +
+  geom_boxplot(mapping = aes(x = reorder(class, hwy, FUN = median), y = hwy)) +
+  coord_flip()
+```
+
+Os dois plots são identicos mas o código do primeiro é melhor para ler e saber o que vai acontecer (dado que você sabe o que significa `geom_boxploth()` - boxplot horizontal).
 
 ### Exercício 4
->
+> One problem with boxplots is that they were developed in an era of much smaller datasets and tend to display a prohibitively large number of “outlying values”. One approach to remedy this problem is the letter value plot. Install the lvplot package, and try using geom_lv() to display the distribution of price vs cut. What do you learn? How do you interpret the plots?
 
 **(Resposta)**
 
-```{r eval = TRUE}
-
-```
-
-### Exercício 5
->
-
-**(Resposta)**
+Instalar e importar o pacote:
 
 ```{r eval = TRUE}
-
+# install.packages("lvplot")
+library(lvplot)
+ggplot(diamonds, aes(x = cut, y = price)) +
+  geom_lv()
 ```
 
-### Exercício 6
->
-
-**(Resposta)**
+Vamos fazer o plot:
 
 ```{r eval = TRUE}
-
+ggplot(diamonds, mapping = aes(x = cut, y = price)) +
+  geom_lv()
 ```
 
+Observando o gráfico eu interpretaria mais ou menos como se interpreta um boxlot. É bem útil para grande quantidade de dados orque fica melhor para diferenciar quantis e quartis, por exemplo. É uma boa alternativa para comprar com o boxplot e verificar melhor a distribuição dos dados.
 
 
 ## 7.5.2.1
