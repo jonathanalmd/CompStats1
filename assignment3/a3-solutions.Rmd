@@ -266,7 +266,7 @@ ggplot(diamonds, mapping = aes(x = cut, y = carat)) +
 Instalar e importar o pacote:
 
 ```{r eval = TRUE}
-# install.packages("ggstance")
+#install.packages("ggstance")
 library(ggstance)
 ```
 
@@ -295,7 +295,7 @@ Os dois plots são identicos mas o código do primeiro é melhor para ler e sabe
 Instalar e importar o pacote:
 
 ```{r eval = TRUE}
-# install.packages("lvplot")
+#install.packages("lvplot")
 library(lvplot)
 ```
 
