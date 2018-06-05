@@ -87,9 +87,30 @@ ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa
 
 
 # TEMPERATURAS EM BERKELEY EM JANEIRO
+load("janeiro.Rdata")
+janeiro_temps
 
 # 1
 # Nos últimos seis anos, qual ano teve o janeiro mais quente? Qual ano teve o mais frio?
+ggplot(janeiro_temps, mapping = aes(x = dia, y = media, colour = as.factor(ano)))+
+  geom_line()
+
+ggplot(janeiro_temps, mapping = aes(y = media, x = as.factor(ano)))+
+  geom_boxplot()
+
+# É fácil verificar que o ano de 2009 teve o janeiro mais quente e 2008 o mais frio.
+
+
+# 2
+# O computador ao qual o sensor é conectado estava quebrado para alguns dias em janeiro de um ano. 
+# Qual ano foi? Explica como você encontrou a resposta – simplesmente examinando os dados visualmente não é aceitável.
+
+ggplot(janeiro_temps, mapping = aes(x = dia, y = media)) + 
+  geom_point() +
+  facet_wrap(~ ano, nrow = 2)
+
+# Fazendo uma analise exploratória para agilizar a procura encontramos qu eé no ano de 2008 entre os dias 11 e 18 mais ou menos 
+
 
 
 
