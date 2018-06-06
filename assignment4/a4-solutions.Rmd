@@ -13,6 +13,39 @@ output:
 library(tidyverse)
 ```
 
+# Função para plotar múltiplos gráficos em conjunto
+
+```{r eval = TRUE}
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  if (is.null(layout)) {
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
+  }
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    for (i in 1:numPlots) {
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
+}
+```
+fonte: http://www.cookbook-r.com/Graphs/Multiple_graphs_on_one_page_(ggplot2)/
+
 
 ```{r setup, include=FALSE}
 # Configurar diretório de trabalho
@@ -79,6 +112,96 @@ ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa
 ```
 
 Como é possível observar, o comportamento varia de acordo com o dia da semana (mais detalhes sobre isso são explicados na resposta da Questão 5).
+
+Agora vamos observar o comportamento nos horários:
+
+```{r eval = TRUE}
+pf1 <- ggplot(filter(fluxo_lot, dia_semana == 1), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl1 <- ggplot(filter(fluxo_lot, dia_semana == 1), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+
+pf2 <- ggplot(filter(fluxo_lot, dia_semana == 2), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl2 <- ggplot(filter(fluxo_lot, dia_semana == 2), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+pf3 <- ggplot(filter(fluxo_lot, dia_semana == 3), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl3 <- ggplot(filter(fluxo_lot, dia_semana == 3), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+pf4 <- ggplot(filter(fluxo_lot, dia_semana == 4), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl4 <- ggplot(filter(fluxo_lot, dia_semana == 4), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+pf5 <- ggplot(filter(fluxo_lot, dia_semana == 5), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl5 <- ggplot(filter(fluxo_lot, dia_semana == 5), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+pf6 <- ggplot(filter(fluxo_lot, dia_semana == 6), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl6 <- ggplot(filter(fluxo_lot, dia_semana == 6), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+pf7 <- ggplot(filter(fluxo_lot, dia_semana == 7), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+
+
+pl7 <- ggplot(filter(fluxo_lot, dia_semana == 7), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+```
+
+```{r eval = TRUE}
+multiplot(pf2,pl2,cols = 1)
+multiplot(pf3,pl3,cols = 1)
+multiplot(pf4,pl4,cols = 1)
+multiplot(pf5,pl5,cols = 1)
+multiplot(pf6,pl6,cols = 1)
+```
+
+```{r eval = TRUE}
+multiplot(pf1,pl1, cols = 1)
+multiplot(pf7,pl7, cols = 1)
+```
+
+### Sobre a relação entre fluxo e horário
+
+Em dias de semana, o comportamento é bastante semelhante. Os picos ocorrem por volta do horário da manhã (entre 6 e 8 horas da manhã) e depois no fim da tarde (entre 16 horas e 17 horas aproximadamente). Isso só não ocorre na quinta feira, que foi um dia marcante mundialmente (mais detalhes na resposta da questão 5). O fim de semana possui comportamento semelhante (sábado e domingo), com os picos pouco acentuados e ocorrendo durante a tarde (entre 15:30 e 17:30 aproximadamente). 
+
+
+### Sobre a relação entre locação e horário
+
+
 
 ## Questão 5
 > O que está acontecendo?

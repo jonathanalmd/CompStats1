@@ -75,10 +75,6 @@ ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa
   geom_line() +
   facet_wrap(~ dia_semana, nrow = 2)
 
-ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa)))+
-  geom_line() +
-  facet_wrap(~ dia_semana, nrow = 2)
-
 # 5
 # O que está acontecendo?
 # Dias de semana tem mais trânsito e consequentemente os carros passam mais tempo em cima do detector)
@@ -126,5 +122,60 @@ jan2008 <- sapply(select(filter(janeiro_temps, ano == 2008), dia), as.factor)
 
 c(1:31) %in% jan2008
 
+ggplot(fluxo_lot, mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  facet_wrap(~ dia_semana, nrow = 2)
 
-select(filter(janeiro_temps, ano == 2008)
+ggplot(fluxo_lot, mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  facet_wrap(~ dia_semana, nrow = 2)
+
+
+
+pf1 <- ggplot(filter(fluxo_lot, dia_semana == 1), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl1 <- ggplot(filter(fluxo_lot, dia_semana == 1), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+pf2 <- ggplot(filter(fluxo_lot, dia_semana == 2), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl2 <- ggplot(filter(fluxo_lot, dia_semana == 2), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+pf3 <- ggplot(filter(fluxo_lot, dia_semana == 3), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl3 <- ggplot(filter(fluxo_lot, dia_semana == 3), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+pf4 <- ggplot(filter(fluxo_lot, dia_semana == 4), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl4 <- ggplot(filter(fluxo_lot, dia_semana == 4), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+pf5 <- ggplot(filter(fluxo_lot, dia_semana == 5), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl5 <- ggplot(filter(fluxo_lot, dia_semana == 5), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+pf6 <- ggplot(filter(fluxo_lot, dia_semana == 6), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl6 <- ggplot(filter(fluxo_lot, dia_semana == 6), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+pf7 <- ggplot(filter(fluxo_lot, dia_semana == 7), mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+pl7 <- ggplot(filter(fluxo_lot, dia_semana == 7), mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line()
+
+
+
+multiplot(pf2,pf3,pf4,pf5,pf6,pl2,pl3,pl4,pl5,pl6, cols = 2)
+multiplot(pf1,pf1,pl7,pl7, cols = 2)
+
