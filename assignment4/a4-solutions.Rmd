@@ -1,0 +1,151 @@
+---
+title: "Lista 4 - CE1"
+author: ['Jonathan Mendes de Almeida - 18/0048775', 'jonathanalmd@gmail.com', 'jonathan@aluno.unb.br','https://jonyddev.github.io']
+lang: en
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+output:
+    pdf_document:
+      latex_engine: xelatex
+---
+# Importar `tidyverse`:
+
+```{r eval = TRUE}
+library(tidyverse)
+```
+
+
+```{r setup, include=FALSE}
+# Configurar diretório de trabalho
+knitr::opts_knit$set(root.dir = getwd())
+```
+
+# FLUXO DE TRÂNSITO EM ESTRADAS NA CALIFÓRINA
+
+## Questão 1
+> Carregam os dados. Coloca o arquivo fluxo-lot.Rdata no diretório de trabalho e executar o comando `load("fluxo-lot.Rdata")`. Verifica que o data.frame `fluxo_lot` aparece no ambiente global.
+
+**(Resposta)**
+```{r eval = TRUE}
+load("fluxo-lot.Rdata")
+#fluxo_lot
+```
+
+## Questão 2
+> Existe uma faixa em particular para qual o fluxo de trânsito seja consistentemente maior que nas outras faixas?
+
+**(Resposta)**
+Vamos fazer dois gráficos, um de linha e um boxplot para tentar verificar isso:
+
+```{r eval = TRUE}
+ggplot(fluxo_lot, mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+
+ggplot(fluxo_lot, mapping = aes(x = as.factor(faixa), y = fluxo)) +
+  geom_boxplot()
+```
+
+Como é possível verificar observando os gráficos plotados, o fluxo de trânsito é maior na faixa 2 apesar da faixa 1 ter maiores picos do que a faixa 1. Isso fica bastante nítido ao observar o boxplot, em que a faixa 2 possui o segundo quartil com valor mais elevado. 
+
+## Questão 3
+> Existe uma relação entre fluxo e taxa de lotação?
+
+**(Resposta)**
+Vamos fazer dois gráficos, um de pontos (com jittering) e um de linhas para tentar verificar isso:
+
+```{r eval = TRUE}
+ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa)))+
+  geom_jitter()
+
+ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa)))+
+  geom_line()
+```
+
+Observando os gráficos podemos conclior que sim, existe uma relação. A medida que o fluxo vai crescendo a taxa de lotação também vai crescendo (na maioria dos dados) até chegar em um ponto que esse crescimento de lotação para e o fluxo diminui para valores de lotação acima de 0.2 aproximadamente.
+
+## Questão 4
+> Essa relação varia de acordo com horário do dia ou dia da semana?
+
+**(Resposta)**
+Para responder essa questão, vamos fazer dois gráficos (de pontos com jittering e de linha) utilizando facetas para separar por dia da semana:
+
+```{r eval = TRUE}
+ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa)))+
+  geom_jitter() +
+  facet_wrap(~ dia_semana, nrow = 2)
+
+ggplot(fluxo_lot, mapping = aes(x = lotacao, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  facet_wrap(~ dia_semana, nrow = 2)
+```
+
+Como é possível observar, o comportamento varia de acordo com o dia da semana (mais detalhes sobre isso são explicados na resposta da Questão 5).
+
+## Questão 5
+> O que está acontecendo?
+
+**(Resposta)**
+Dias de semana tem mais trânsito e consequentemente os carros passam mais tempo em cima do detector. Algo estranho ocorre na quinta feira, em que não há um comortamento típico de um dia de semana. Com isso, ao pesquisar sobre o que ocorreu nesse dia (verificar se é algum feriado ou algo do tipo) descobri que dia 20 de março de 2003 foi o dia em que os Estados Unidos invadiu o Iraque (A US-led coalition launches an invasion of Iraq, beginning the Iraq War http://edition.cnn.com/2003/WORLD/meast/03/19/sprj.irq.main/). Com isso, o comportamento de quinta feira ficou diferente (um pouco mais parecido com o comportamento de fim de semana).
+
+# TEMPERATURAS EM BERKELEY EM JANEIRO
+```{r eval = TRUE}
+load("janeiro.Rdata")
+#janeiro_temps
+```
+
+## Questão 1
+> Nos últimos seis anos, qual ano teve o janeiro mais quente? Qual ano teve o mais frio?
+
+**(Resposta)**
+
+Para verificar isso, vamos fazer dois gráficos, um gráfico de linhas e um boxplot:
+
+```{r eval = TRUE}
+ggplot(janeiro_temps, mapping = aes(x = dia, y = media, colour = as.factor(ano)))+
+  geom_line()
+
+ggplot(janeiro_temps, mapping = aes(y = media, x = as.factor(ano)))+
+  geom_boxplot()
+```
+
+Ao observar os gráficos, é fácil verificar que o ano de 2009 teve o janeiro mais quente e 2008 o mais frio.
+
+## Questão 2
+> O computador ao qual o sensor é conectado estava quebrado para alguns dias em janeiro de um ano. Qual ano foi? Explica como você encontrou a resposta – simplesmente examinando os dados visualmente não é aceitável.
+
+**(Resposta)**
+O ano que o sensor estava quebrado por alguns dias foi o ano de 2008. Para chegar nessa conclusão, basta contar quantas observações ocorreram em cada ano. O ano que tiver menos que 31 observações será o ano que o sensor estava quebrado por um ou mais dias. Para isso, basta usar a função `count()` e a função `filter()`:
+
+```{r eval = TRUE}
+for (year in 2005:2010){
+  ndays <- count(filter(janeiro_temps, ano == year))
+  if (ndays != 31){
+    print(year)
+    print(ndays)
+  }
+}
+```
+
+Observando o resultado obtido com o algoritmo feito, é possível verificar que o ano de 2008 só teve 25 observações, ou seja, foi o ano que o sensor ficou quebrado por 6 dias. 
+
+Agora que já sabemos que o problema ocorreu no ano de 2008, vamos verificar quais foram os dias em que o sensor ficou quebrado:
+
+```{r eval = TRUE}
+jan2008 <- sapply(select(filter(janeiro_temps, ano == 2008), dia), as.factor)
+c(1:31) %in% jan2008
+```
+
+Com isso, é possível verificar que o sensor ficou quebrado nos dias 12, 13, 14, 15, 16 e 17 (números que não possuem para os dias de janeiro de 2008). Como postrado, isso foi observado fazendo uma simples comparação de elementos entre vetores, em que `c(1:31)` é um vetor que vai de 1 a 31 e `jan2008` contém os dias que o sensor realizou medidas. Fazendo `c(1:31) %in% jan2008` temos como resultado um vetor contendo valores `TRUE` ou `FALSE` para caso o valor do vetor `c(1:31)` está no vetor `jan2008` ou não. Com isso, como já foi dito, o sensor ficou quebrado nos dias 12 à 17 pois são os valores que acusam como `FALSE` na comparação feita (ou seja, estão faltando).
+
+Vamos verificar isso visualmente plotando gráficos de pontos para cada ano:
+
+```{r eval = TRUE}
+ggplot(janeiro_temps, mapping = aes(x = dia, y = media)) + 
+  geom_point() +
+  facet_wrap(~ ano, nrow = 2)
+```
+
+
+
+
+
+

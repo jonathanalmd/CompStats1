@@ -1,4 +1,4 @@
-library('tidyverse')
+library(tidyverse)
 
 set_wdir <- function() {
   library(rstudioapi) 
@@ -109,8 +109,22 @@ ggplot(janeiro_temps, mapping = aes(x = dia, y = media)) +
   geom_point() +
   facet_wrap(~ ano, nrow = 2)
 
-# Fazendo uma analise exploratória para agilizar a procura encontramos qu eé no ano de 2008 entre os dias 11 e 18 mais ou menos 
+# Fazendo uma analise exploratória para agilizar a procura encontramos qu eé no ano de 2008 nos dias 12 à 17. 
+# No caso, não ocorre 'missing value' como NA, os dados simplesmente não existem (não há linhas para esses dias no dataset). 
+# Para verificar isso, basta contar quantas linhas tem para cada ano.
+
+for (year in 2005:2010){
+  days <- count(filter(janeiro_temps, ano == year))
+  if (days != 31){
+    print(year)
+  }
+}
 
 
 
+jan2008 <- sapply(select(filter(janeiro_temps, ano == 2008), dia), as.factor)
 
+c(1:31) %in% jan2008
+
+
+select(filter(janeiro_temps, ano == 2008)
