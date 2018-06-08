@@ -202,11 +202,16 @@ O comportamento é semelhante com o que ocorre para a relação entre fluxo e ho
 
 Em suma, no geral, os picos de fluxo e lotacao coincidem. No entanto, vale ressaltar a presença de picos muito acentuados de lotação para terça feira pelo horário da manhã (o que não ocorre nos outros dias úteis). Outro destaque vale para sexta feira, em que há picos no horário noturno (tanto de fluxo quanto de locação). A razão para isso é óbvia: sexta é o dia em que muitas pessoas saem pela noite para festas ou comemorações (entre outros).
 
+Em suma, em dias de semana (tirando a quinta feira, que foi um dia histórico) o que acontece é que pela manha o fluxo tem um pico no horário em que a maior parte das pessoas sai para trabalhar e outro pico de fluxo no horário em que as pessoas saem do trabalho. Além disso deu para verificar que o fluxo noturno aumenta nas sextas feiras, dia em que as pessoas normalmente saem para se divertir. O comportamento no sábado e no domingo é semelhante, tendo um pico de fluxo mais ou menos no meio/fim da tarde, em que pode ser devido ao fato que as pessoas saem para passear com a família ou algo do tipo. Ou seja, há uma relação tanto entre fluxo/locação e horário quanto relação entre fluxo/locação e dia da semana.
+
 ## Questão 5
 > O que está acontecendo?
 
 **(Resposta)**
-Dias de semana tem mais trânsito e consequentemente os carros passam mais tempo em cima do detector. Algo estranho ocorre na quinta feira, em que não há um comortamento típico de um dia de semana. Com isso, ao pesquisar sobre o que ocorreu nesse dia (verificar se é algum feriado ou algo do tipo) descobri que dia 20 de março de 2003 foi o dia em que os Estados Unidos invadiu o Iraque (A US-led coalition launches an invasion of Iraq, beginning the Iraq War http://edition.cnn.com/2003/WORLD/meast/03/19/sprj.irq.main/). Com isso, o comportamento de quinta feira ficou diferente (um pouco mais parecido com o comportamento de fim de semana).
+Dias de semana tem mais trânsito e consequentemente os carros passam mais tempo em cima do detector. Algo estranho ocorre na quinta feira, em que não há um comortamento típico de um dia de semana. Com isso, ao pesquisar sobre o que ocorreu nesse dia (verificar se é algum feriado ou algo do tipo) descobri que dia 20 de março de 2003 foi o dia em que os Estados Unidos invadiu o Iraque (A US-led coalition launches an invasion of Iraq, beginning the Iraq War http://edition.cnn.com/2003/WORLD/meast/03/19/sprj.irq.main/). Com isso, o comportamento de quinta feira ficou diferente, um trânsito com fluxo bastante baixo chegando a ser consideravelmente menos do que nos fins de semana. 
+
+Em suma, em dias de semana (tirando a quinta feira, que foi um dia histórico) o que acontece é que pela manha o fluxo tem um pico no horário em que a maior parte das pessoas sai para trabalhar e outro pico de fluxo no horário em que as pessoas saem do trabalho. Além disso deu para verificar que o fluxo noturno aumenta nas sextas feiras, dia em que as pessoas normalmente saem para se divertir. O comportamento no sábado e no domingo é semelhante, tendo um pico de fluxo mais ou menos no meio/fim da tarde, em que pode ser devido ao fato que as pessoas saem para passear com a família ou algo do tipo. 
+
 
 # TEMPERATURAS EM BERKELEY EM JANEIRO
 ```{r eval = TRUE}
@@ -266,8 +271,11 @@ ggplot(janeiro_temps, mapping = aes(x = dia, y = media)) +
   facet_wrap(~ ano, nrow = 2)
 ```
 
+E isso pode ser observado mais facilmente ao plotar um gráfico de barras:
 
-
-
+```{r eval = TRUE}
+ggplot(data = janeiro_temps) + 
+  geom_bar(mapping = aes(x = ano, y = ..prop..))
+```
 
 
