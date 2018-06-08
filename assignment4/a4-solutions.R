@@ -179,3 +179,14 @@ pl7 <- ggplot(filter(fluxo_lot, dia_semana == 7), mapping = aes(x = data_hora, y
 multiplot(pf2,pf3,pf4,pf5,pf6,pl2,pl3,pl4,pl5,pl6, cols = 2)
 multiplot(pf1,pf1,pl7,pl7, cols = 2)
 
+
+
+
+ggplot(fluxo_lot, mapping = aes(x = data_hora, y = lotacao, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 0.6))
+
+ggplot(fluxo_lot, mapping = aes(x = data_hora, y = fluxo, colour = as.factor(faixa)))+
+  geom_line() +
+  coord_cartesian(ylim = c(0, 210))
+

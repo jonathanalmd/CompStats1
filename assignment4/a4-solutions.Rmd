@@ -190,18 +190,17 @@ multiplot(pf6,pl6,cols = 1)
 ```
 
 ```{r eval = TRUE}
-multiplot(pf1,pl1, cols = 1)
 multiplot(pf7,pl7, cols = 1)
+multiplot(pf1,pl1, cols = 1)
 ```
 
-### Sobre a relação entre fluxo e horário
+### Sobre a relação entre fluxo, locação e horário
 
-Em dias de semana, o comportamento é bastante semelhante. Os picos ocorrem por volta do horário da manhã (entre 6 e 8 horas da manhã) e depois no fim da tarde (entre 16 horas e 17 horas aproximadamente). Isso só não ocorre na quinta feira, que foi um dia marcante mundialmente (mais detalhes na resposta da questão 5). O fim de semana possui comportamento semelhante (sábado e domingo), com os picos pouco acentuados e ocorrendo durante a tarde (entre 15:30 e 17:30 aproximadamente). 
+Em dias de semana, o comportamento é bastante semelhante. Os picos ocorrem por volta do horário da manhã (entre 6 e 8 horas da manhã) e depois no fim da tarde (entre 16 horas e 17 horas aproximadamente). Isso só não ocorre na quinta feira, que foi um dia marcante mundialmente (mais detalhes na resposta da questão 5). O fim de semana possui comportamento semelhante (sábado e domingo), com os picos pouco acentuados e ocorrendo durante a tarde (entre 15:30 e 17:30 aproximadamente).
 
+O comportamento é semelhante com o que ocorre para a relação entre fluxo e horário. No entanto, para os fins de semana, o gráfico de sábado mostra que a locação mantém-se constante por praticamente o dia inteiro, aumentando apenas um pouco quando o fluxo aumenta, diferente de domingo, dia em que há um pico que chama atenção no horário entre 15 e 17 horas aproximadamente (acopanhando o pico do fluxo). 
 
-### Sobre a relação entre locação e horário
-
-
+Em suma, no geral, os picos de fluxo e lotacao coincidem. No entanto, vale ressaltar a presença de picos muito acentuados de lotação para terça feira pelo horário da manhã (o que não ocorre nos outros dias úteis). Outro destaque vale para sexta feira, em que há picos no horário noturno (tanto de fluxo quanto de locação). A razão para isso é óbvia: sexta é o dia em que muitas pessoas saem pela noite para festas ou comemorações (entre outros).
 
 ## Questão 5
 > O que está acontecendo?
