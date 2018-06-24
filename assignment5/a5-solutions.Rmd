@@ -1,0 +1,75 @@
+---
+title: "Lista 5 - CE1 - Arrumar os dados de Fluxo de Trânsito nas Estradas em Califórnia"
+author: ['Jonathan Mendes de Almeida - 18/0048775', 'jonathanalmd@gmail.com', 'jonathan@aluno.unb.br','https://jonyddev.github.io']
+lang: en
+date: "`r format(Sys.time(), '%d de %B de %Y')`"
+output:
+    pdf_document:
+      latex_engine: xelatex
+---
+
+# 1 - Importar `tidyverse`:
+
+```{r eval = TRUE}
+library(tidyverse)
+```
+
+```{r setup, include=FALSE}
+# Configurar diretório de trabalho
+knitr::opts_knit$set(root.dir = getwd())
+```
+
+# 2 - Ler os dados do arquivo "fluxo-lotacao-port.csv" dentro de um `tibble`
+
+```{r eval = TRUE}
+rawfldata <- as_tibble(read.csv("fluxo-lotacao-port.csv"))
+is_tibble(rawfldata)
+```
+
+# 3 - Ler seção 12.3.1 do livo texto de novo: OK
+
+# 4 - Criar dois novos `tibbles` um com os dados de data/hora e fluxo e outro com os dados de data/hora e lotação
+
+```{r eval = TRUE}
+fdata <- select(rawfldata, Date_Time_AMPM, Faixa1_Fluxo, Faixa2_Fluxo, Faixa3_Fluxo)
+ldata <- select(rawfldata, Date_Time_AMPM, Faixa1_Lotação, Faixa2_Lotação, Faixa3_Lotação)
+```
+
+# 5 - “Arrumar” os dois ‘tibbles’ que acabou de criar
+
+```{r eval = TRUE}
+library("dplyr")
+
+names(fdata)[names(fdata) == "Faixa1_Fluxo"] <- "1"
+names(fdata)[names(fdata) == "Faixa2_Fluxo"] <- "2"
+names(fdata)[names(fdata) == "Faixa3_Fluxo"] <- "3"
+
+fdata %>%
+  gather(`1`, `2`, `3`, key = "faixa", value = "fluxo")
+
+names(ldata)[names(ldata) == "Faixa1_Lotação"] <- "1"
+names(ldata)[names(ldata) == "Faixa2_Lotação"] <- "2"
+names(ldata)[names(ldata) == "Faixa3_Lotação"] <- "3"
+
+ldata %>%
+  gather(`1`, `2`, `3`, key = "faixa", value = "lotacao") 
+```
+
+# 6 - Juntar os dois `tibbles` arrumados
+
+```{r eval = TRUE}
+
+```
+
+
+# 7
+
+```{r eval = TRUE}
+
+tdata %>%
+  separate(Date_Time_AMPM, into = c("data", "horas"), sep = " ") %>%
+  separate(data, into = c("mes", "dia", "ano"), sep = "/") %>%
+  separate(horas, into = c("hora", "minuto", "segundo"), sep = ":")
+```
+
+
